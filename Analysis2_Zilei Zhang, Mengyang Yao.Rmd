@@ -1,0 +1,94 @@
+---
+title: "Assignment2"
+author: "Zilei Zhang, Mengyang Yao"
+date: "09/24/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r data clean}
+library(tidyverse)
+library(readxl)
+## load the already add-on packages
+df = read_excel("C:/Users/m1786/Desktop/For Brandeis/academic/Big Data/W16604-XLS-ENG.xlsx") 
+## read this excel file and name as "df"
+df_cleaned = df%>%filter(type == "house")
+## clean the data by keeping only rows whose type is "house", using filter function, and name as "df_cleaned"
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r visualization, echo=TRUE}
+## a) Create a ggplot2 histogram of house sub-types. Approximately what proportion of houses are detached?
+## y-axis is the proportion of each subtype, the proportion of detached house is 59%.
+p1 <- ggplot(df_cleaned,aes(x=subtype))+geom_bar(aes(y = ..count../sum(..count..)))+scale_y_continuous(labels=scales::percent)+ggtitle("houses in subtype")
+p1
+## b) Create a ggplot2 histogram of bathrooms with different colours for house sub-types.
+## According to the histogram, Condo Apartment has one bathroom on average, Townhouse has two and a half. However, the number of bathrooms for Single Famiy Detached is spread, most around 2, and some have more, till seven bathrooms. The reason for adjusted-binwidth is to make mean and spread clear. Adjusted-position is easy to compare. 
+p2 <- ggplot(df_cleaned,aes(x=bathrooms, fill=subtype))+geom_histogram(position="dodge",binwidth=2)+ggtitle("bathrooms in subtype")
+p2
+## c) Create a ggplot2 scatter-plot of how price varies with the area of the house. Add a line of best fit to this plot.
+## Overall, price increases as area increases.
+p3 <- ggplot(df_cleaned,aes(x=sqfoot, y=price))+geom_point()+geom_smooth(method = lm)+ggtitle("Relationship of price and area")
+p3
+```
+
+
+```{r additional visualization, echo=TRUE}
+## a) One informative, well-labeled univariate graph.
+
+## i) Why did you select the variables (and summaries) that you chose? Because bedroom is an important facet when customers are making choice. Using these two variables: the number of bedrooms and subtypes can do good to figure out: (1) In each subtype, what is the most common number of bedrooms and what is the distribution of the number of bedrooms; (2) In any number of bedroom, which subtype predominates in it.
+
+## ii) Why did you select the type of visualization for these variables? Because the number of bedrooms is a continuous variable, and subtype is a category. We want to figure out how the subtypes distribute on the number of bedrooms. Thus, the grouping bars together is suitable. 
+
+## iii) How did you improve the graph from its initial ggplot2 output? Adjust binwidth to make it more concentrated. Condo Apartment has one bedroom on average, Townhouse has three on average. However, the number of bedrooms for Single Family Detached is spread, ranges from one to nine, three is mode. Adjusted-position is easy to compare.
+
+##iv) What question are you trying to answer with this visualization? Among three subtypes, what is the mode of the number of bedrooms? In each level of the number of bedrooms, Which subtype plays the most crucial role. 
+
+## v) What conclusion do you draw about the answer to your question?This plot helps customer limit their choices when they have preference for the number of bedrooms. For Condo Apartment, the majority has 2 bedrooms; But for Single Family Detached and Town house, 3 is the mode for bedrooms. Moreover, in the level of 1-3, Condo Apartment plays the most crucial role, which means this apartment focuses on the customers who travel alone or with their partner or spouse(Not a big family). The range of bedrooms of Single Family Detached is 2-9, which means it focuses on the customers who travel with their small or big family. The Townhouse can suit the customers who travel with their partner or their small family, but the scale of it is small.
+p4 = ggplot(df_cleaned,aes(x=bedrooms, fill=subtype))+geom_histogram(position="dodge",binwidth=1)+labs(y="Numbers of Subtype", x="Number of Bathrooms")+ggtitle("Bedrooms in Subtype")
+p4
+
+## b) One informative, well-labeled graph of a continuous variable broken out by different levels of a factor variable.
+ 
+## i) Why did you select the variables (and summaries) that you chose? Because price is an important factor which can help us figure out whether it is a high-end house or economy house. 
+
+## ii) Why did you select the type of visualization for these variables? Price is continuous while subtype is discrete. Using box plot can show the subtype distribution. From the plot, it is known that condo apartment and townhouse have much smaller price range than single family detached.
+
+## iii) How did you improve the graph from its initial ggplot2 output? Using box-plot to show quarters. 
+
+##iv) What question are you trying to answer with this visualization? (1)	What are the means and the difference of means of these houses? (2)	Among the three houses, whose price spread widely and whose price is concentrated?
+
+## v) What conclusion do you draw about the answer to your question? The ranges of condo apartment and townhouse are small. Their means are both under 500000 dollars. And Single Family Detached has the highest mean. For single family detached, its mean is approximately 800000 dollars, the lower quarter is approximately 600000 and the upper quarter is approximately 1200000. The price of Single Family Detached house spreads widely.
+
+p5 = ggplot(df_cleaned,aes(x=subtype, y=price))+geom_boxplot()+ggtitle("Boxplot of Price in Subtype")
+p5
+
+## c) One informative, well-labeled bivariate (x-y) graph displaying the relationship between two numerical variables, broken out by different levels of a factor variable.
+
+## i) Why did you select the variables (and summaries) that you chose? Because we want to figure out the relationship between the area and the price in each subtype. 
+
+## ii) Why did you select the type of visualization for these variables? Price and area are both continuous variables. Using scattered and regressive line plot can easily see the relationship between the two variables. Generally, price increases as sqfoot increases. These plots can help us to prove whether this relationship is correct.
+
+## iii) How did you improve the graph from its initial ggplot2 output? Facet can be used to see the relation separately for three subtypes.
+
+##iv) What question are you trying to answer with this visualization? (1)	What is the relationship between square and price in each subtype. (2)	In different price ranges, which subtype is the ideal one for the customers. 
+
+## v) What conclusion do you draw about the answer to your question?Condo apartment and townhouse are cheaper than single family detached. For sq foot under 1000, condo apartment is mostly choice; for sq foot between 1000 and 2000, town house is cost-effective choice; for sq foot over 2000, single family detached is the only choice.
+
+p6 = ggplot(df_cleaned,aes(x=sqfoot , y=price)) + geom_point() + geom_smooth(method = lm) + facet_wrap(.~subtype) + ggtitle("Relation of Price and Area in Subtype")
+p6
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
